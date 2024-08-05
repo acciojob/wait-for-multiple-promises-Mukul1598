@@ -22,32 +22,41 @@ output.innerHTML = `
     </tr>
 `;
 
-// Use Promise.all to wait for all promises to resolve
-const startTime = performance.now();
+// Measure the time taken for all promises to resolve
+const startTime = Date.now(); // Use Date.now() for simpler timing
 
-Promise.all([promise1, promise2, promise3]).then((results) => {
-    const endTime = performance.now();
-    const totalTime = (endTime - startTime) / 1000; // Total time in seconds
+Promise.all([promise1, promise2, promise3])
+    .then((results) => {
+        const endTime = Date.now();
+        const totalTime = (endTime - startTime) / 1000; // Total time in seconds
 
-    // Remove loading text
-    output.innerHTML = '';
+        // Remove loading text
+        output.innerHTML = '';
 
-    // Add results to the table
-    results.forEach(result => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${result.name}</td>
-            <td>${result.time}</td>
+        // Add results to the table
+        results.forEach(result => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${result.name}</td>
+                <td>${result.time}</td>
+            `;
+            output.appendChild(row);
+        });
+
+        // Add total row
+        const totalRow = document.createElement('tr');
+        totalRow.innerHTML = `
+            <td>Total</td>
+            <td>${totalTime.toFixed(3)}</td>
         `;
-        output.appendChild(row);
+        output.appendChild(totalRow);
+    })
+    .catch((error) => {
+        // Handle any errors that might occur
+        console.error('An error occurred:', error);
+        output.innerHTML = `
+            <tr>
+                <td colspan="2" class="text-center text-danger">An error occurred</td>
+            </tr>
+        `;
     });
-
-    // Add total row
-    const totalRow = document.createElement('tr');
-    totalRow.innerHTML = `
-        <td>Total</td>
-        <td>${totalTime.toFixed(3)}</td>
-    `;
-    output.appendChild(totalRow);
-});
-
